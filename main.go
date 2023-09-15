@@ -1,11 +1,18 @@
 package main
 
-import "codegen/cmd"
+import (
+	"fmt"
+
+	"codegen/cmd"
+)
 
 func main() {
 	defer recoverPanic()
 
-	cmd.Execute()
+	err := cmd.Execute()
+	if err != nil {
+		fmt.Println("cmd.Execute", err)
+	}
 }
 
 func recoverPanic() {
