@@ -21,8 +21,8 @@ func init() {
 			Short: "A code generation",
 			Long:  `It can generate code of dao, grpc and so on`,
 			Run: func(cmd *cobra.Command, args []string) {
-				m := module.New(cmd, args)
-				m.Run(cmd, args)
+				c := module.NewStrategy(cmd)
+				c.Run(cmd, args)
 			},
 		}
 	})

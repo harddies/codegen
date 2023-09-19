@@ -7,13 +7,22 @@ import (
 )
 
 type IModule interface {
-	Run(cmd *cobra.Command, args []string)
+	Run(c *cobra.Command, args []string)
 }
 
-func New(cmd *cobra.Command, args []string) (m IModule) {
-	switch cmd.Flag(model.FlagNameModule).Value.String() {
+type Strategy struct {
+	m IModule
+}
+
+func (s *Strategy) Run(command *cobra.Command, args []string) {
+	s.m.Run(command, args)
+}
+
+func NewStrategy(command *cobra.Command) (s *Strategy) {
+	s = new(Strategy)
+	switch command.Flag(model.FlagNameModule).Value.String() {
 	case model.FlagModuleDao:
-		m = new(dao)
+		s.m = new(dao)
 	}
 	return
 }
