@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"codegen/internal/model"
+	"github.com/harddies/codegen/internal/model"
 )
 
 var (

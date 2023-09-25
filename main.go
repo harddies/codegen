@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"codegen/cmd"
+	"github.com/harddies/codegen/cmd"
 )
 
 func main() {

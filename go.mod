@@ -1,4 +1,4 @@
-module codegen
+module github.com/harddies/codegen
 
 go 1.21.1
 

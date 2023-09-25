@@ -3,8 +3,8 @@ package module
 import (
 	"fmt"
 
-	"codegen/internal/arg"
-	"codegen/internal/model"
+	"github.com/harddies/codegen/internal/arg"
+	"github.com/harddies/codegen/internal/model"
 
 	"github.com/spf13/cobra"
 )

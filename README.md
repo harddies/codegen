@@ -1,1 +1,1 @@
-# codegen
+# github.com/harddies/codegen

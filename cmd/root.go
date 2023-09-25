@@ -3,9 +3,9 @@ package cmd
 import (
 	"sync"
 
-	"codegen/internal/arg"
-	"codegen/internal/model"
-	"codegen/internal/module"
+	"github.com/harddies/codegen/internal/arg"
+	"github.com/harddies/codegen/internal/model"
+	"github.com/harddies/codegen/internal/module"
 
 	"github.com/spf13/cobra"
 )
@@ -24,7 +24,7 @@ var (
 func init() {
 	once.Do(func() {
 		rootCmd = &cobra.Command{
-			Use:   "codegen",
+			Use:   "github.com/harddies/codegen",
 			Short: "A code generation",
 			Long:  `It can generate code of dao, grpc and so on`,
 			Run: func(cmd *cobra.Command, args []string) {
@@ -39,9 +39,9 @@ func init() {
 			},
 		}
 	})
-	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, "m", "", "generate which code of module. [required]\n - dao\n - page")
-	rootCmd.Flags().StringSliceVarP(&fns, model.FlagNameFuncNames, "f", nil, "specify function names that need to generate.")
-	rootCmd.Flags().StringVarP(&output, model.FlagNameFuncNames, "f", "", "specify function names that need to generate.")
+	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, model.FlagNameModuleShort, "", "generate which code of module. [required]\n - dao\n - page")
+	rootCmd.Flags().StringSliceVarP(&fns, model.FlagNameFuncNames, model.FlagNameFuncNamesShort, nil, "specify function names that need to generate.")
+	rootCmd.Flags().StringVarP(&output, model.FlagNameOutput, model.FlagNameOutputShort, "", "specify function names that need to generate.")
 }
 
 func Execute() error {

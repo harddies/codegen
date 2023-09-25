@@ -1,7 +1,8 @@
 package model
 
 const (
-	FlagNameFuncNames = "func-names"
+	FlagNameFuncNames      = "func-names"
+	FlagNameFuncNamesShort = "f"
 
 	FuncNamesDefaultName = "Demo"
 )
