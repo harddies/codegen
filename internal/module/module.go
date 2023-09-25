@@ -1,7 +1,10 @@
 package module
 
 import (
+	"codegen/internal/arg"
 	"codegen/internal/model"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -18,11 +21,16 @@ func (s *Strategy) Run(command *cobra.Command, args []string) {
 	s.m.Run(command, args)
 }
 
-func NewStrategy(command *cobra.Command) (s *Strategy) {
+func NewStrategy(command *cobra.Command, args *arg.Sets) (s *Strategy) {
 	s = new(Strategy)
-	switch command.Flag(model.FlagNameModule).Value.String() {
+	switch strings.ToLower(args.Module) {
 	case model.FlagModuleDao:
-		s.m = new(dao)
+		s.m = &dao{Sets: *args}
+	case model.FlagModulePage:
+		s.m = &page{Sets: *args}
+	default:
+		_ = command.Usage()
+		os.Exit(1)
 	}
 	return
 }

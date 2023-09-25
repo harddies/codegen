@@ -3,5 +3,6 @@ package model
 const (
 	FlagNameModule = "module"
 
-	FlagModuleDao = "dao"
+	FlagModuleDao  = "dao"
+	FlagModulePage = "page"
 )

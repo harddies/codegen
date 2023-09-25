@@ -1,6 +1,7 @@
 package module
 
 import (
+	"codegen/internal/arg"
 	"fmt"
 
 	"codegen/internal/model"
@@ -9,6 +10,7 @@ import (
 )
 
 type dao struct {
+	arg.Sets
 }
 
 func (d *dao) Name() string {
