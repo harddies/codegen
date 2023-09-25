@@ -1,9 +1,9 @@
 package module
 
 import (
-	"codegen/internal/arg"
 	"fmt"
 
+	"codegen/internal/arg"
 	"codegen/internal/model"
 
 	"github.com/spf13/cobra"

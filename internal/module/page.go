@@ -1,11 +1,12 @@
 package module
 
 import (
-	"codegen/internal/arg"
-	"codegen/internal/model"
 	"fmt"
 	"os"
 	"text/template"
+
+	"codegen/internal/arg"
+	"codegen/internal/model"
 
 	"github.com/spf13/cobra"
 )

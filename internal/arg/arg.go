@@ -1,10 +1,11 @@
 package arg
 
 import (
-	"codegen/internal/model"
 	"fmt"
 	"os"
 	"path"
+
+	"codegen/internal/model"
 )
 
 var (
