@@ -50,12 +50,25 @@ const (
 import (
 	"io"
 
+	"gms-back/api"
+	"gms-back/constant"
 	"gms-back/err"
+	"gms-back/model"
 	"gms-back/project"
 )
 
 {{ range .FuncNames }}
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
+	var routeMeta project.RouteMeta
+	req, ok := iReq.(*model.{{ . }}Req)
+	if !ok {
+		ei.Code = err.HttpRequestErr
+		goto TAG
+	}
+	if routeMeta, ok = iMeta.(project.RouteMeta); !ok {
+		ei.Code = err.HttpRequestErr
+		goto TAG
+	}
 TAG:
 	res = body
 	return
