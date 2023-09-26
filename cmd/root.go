@@ -24,14 +24,14 @@ var (
 func init() {
 	once.Do(func() {
 		rootCmd = &cobra.Command{
-			Use:   "github.com/harddies/codegen",
+			Use:   "codegen",
 			Short: "A code generation",
-			Long:  `It can generate code of dao, grpc and so on`,
+			Long:  `It can generate code of page, dao, grpc and so on`,
 			Run: func(cmd *cobra.Command, args []string) {
 				argSets := arg.New(
 					arg.SetModule(mod),
 					arg.SetFuncNames(fns),
-					arg.SetOutput(""),
+					arg.SetOutput(output),
 				)
 
 				c := module.NewStrategy(cmd, argSets)

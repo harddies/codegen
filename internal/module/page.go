@@ -28,7 +28,7 @@ func (d *page) Run(cmd *cobra.Command, args []string) {
 		}
 	}()
 
-	t, err := template.New("page").Parse(pageTpl)
+	t, err := template.New(pageTplName).Parse(pageTpl)
 	if err != nil {
 		return
 	}
@@ -42,10 +42,13 @@ func (d *page) Run(cmd *cobra.Command, args []string) {
 	if err = t.Execute(f, d.Sets); err != nil {
 		return
 	}
+
+	fmt.Printf("generate file [%s] successfully\n", d.Output)
 }
 
 const (
-	pageTpl = `package page
+	pageTplName = "page"
+	pageTpl     = `package page
 
 import (
 	"io"
