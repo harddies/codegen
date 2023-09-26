@@ -59,7 +59,6 @@ import (
 	"gms-back/model"
 	"gms-back/project"
 )
-
 {{ range .FuncNames }}
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
 	var routeMeta project.RouteMeta
@@ -76,18 +75,15 @@ TAG:
 	res = body
 	return
 }
-
 {{ end }}
-func init() {
-	{{ range .FuncNames }}
+func init() {{{ range .FuncNames }}
 	project.APIRegist(api.{{ . }}, []string{constant.Mist, constant.Dream}, project.Info{
 		Auth: false,
 		Unmarshal: func(body io.ReadCloser) (interface{}, error) {
 			return project.APIUnmarshal(body, &model.{{ . }}Req{})
 		},
 		Execute: {{ . }},
-	})
-	{{ end }}
+	}){{ end }}
 }
 `
 )
