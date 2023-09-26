@@ -33,7 +33,7 @@ func (d *page) Run(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	f, err := os.Create(d.Output)
+	f, err := os.OpenFile(d.Output, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		return
 	}
@@ -61,7 +61,10 @@ import (
 )
 {{ range .FuncNames }}
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
-	var routeMeta project.RouteMeta
+	var (
+		routeMeta project.RouteMeta
+		body	  = &model.{{ . }}Res{}
+	)
 	req, ok := iReq.(*model.{{ . }}Req)
 	if !ok {
 		ei.Code = err.HttpRequestErr
@@ -71,14 +74,15 @@ func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res in
 		ei.Code = err.HttpRequestErr
 		goto TAG
 	}
+
 TAG:
 	res = body
 	return
 }
 {{ end }}
-func init() {{{ range .FuncNames }}
-	project.APIRegist(api.{{ . }}, []string{constant.Mist, constant.Dream}, project.Info{
-		Auth: false,
+func init() { {{ range .FuncNames }}
+	project.APIRegist(api.{{ . }}, constant.GetProjectGroupGames(), project.Info{
+		Auth: true,
 		Unmarshal: func(body io.ReadCloser) (interface{}, error) {
 			return project.APIUnmarshal(body, &model.{{ . }}Req{})
 		},
