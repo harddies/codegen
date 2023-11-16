@@ -51,21 +51,23 @@ const (
 	pageTpl     = `package page
 
 import (
+	"context"
 	"io"
 
 	"gms-back/api"
 	"gms-back/constant"
 	"gms-back/err"
-	"gms-back/model"
 	"gms-back/project"
+	"gms-back/proto/request"
 )
 {{ range .FuncNames }}
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
 	var (
 		routeMeta project.RouteMeta
-		body	  = &model.{{ . }}Res{}
+		body	  = &request.{{ . }}Res{}
+		ctx		  = context.TODO()
 	)
-	req, ok := iReq.(*model.{{ . }}Req)
+	req, ok := iReq.(*request.{{ . }}Req)
 	if !ok {
 		ei.Code = err.HttpRequestErr
 		goto TAG
@@ -84,7 +86,7 @@ func init() { {{ range .FuncNames }}
 	project.APIRegist(api.{{ . }}, constant.GetProjectGroupGames(), project.Info{
 		Auth: true,
 		Unmarshal: func(body io.ReadCloser) (interface{}, error) {
-			return project.APIUnmarshal(body, &model.{{ . }}Req{})
+			return project.APIUnmarshal(body, &request.{{ . }}Req{})
 		},
 		Execute: {{ . }},
 	}){{ end }}
