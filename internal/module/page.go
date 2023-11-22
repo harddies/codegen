@@ -64,18 +64,21 @@ import (
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
 	var (
 		routeMeta project.RouteMeta
-		body	  = &request.{{ . }}Res{}
+		body	  = *request.{{ . }}Res
 		ctx		  = context.TODO()
 	)
 	req, ok := iReq.(*request.{{ . }}Req)
 	if !ok {
-		ei.Code = err.HttpRequestErr
+		ei.Code = err.ParamErr
 		goto TAG
 	}
 	if routeMeta, ok = iMeta.(project.RouteMeta); !ok {
-		ei.Code = err.HttpRequestErr
+		ei.Code = err.ParamErr
 		goto TAG
 	}
+
+	ei.Code = err.Succ
+	body = &request.{{ . }}Res{}
 
 TAG:
 	res = body
