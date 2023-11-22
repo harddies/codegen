@@ -64,7 +64,7 @@ import (
 func {{ . }}(p project.IProject, target string, iReq, iMeta interface{}) (res interface{}, ei err.ErrInfo) {
 	var (
 		routeMeta project.RouteMeta
-		body	  = *request.{{ . }}Res
+		body	  *request.{{ . }}Res
 		ctx		  = context.TODO()
 	)
 	req, ok := iReq.(*request.{{ . }}Req)
