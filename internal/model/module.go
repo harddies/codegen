@@ -4,6 +4,6 @@ const (
 	FlagNameModule      = "module"
 	FlagNameModuleShort = "m"
 
-	FlagModuleDao  = "dao"
-	FlagModulePage = "page"
+	FlagModuleDao = "dao"
+	FlagModuleBts = "bts"
 )

@@ -39,7 +39,7 @@ func init() {
 			},
 		}
 	})
-	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, model.FlagNameModuleShort, "", "generate which code of module. [required]\n - dao\n - page")
+	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, model.FlagNameModuleShort, "", "generate which code of module. [required]\n - dao\n - bts: generate bts code that is rw between cache and db base on kratosV2 data. e.g.\n\t//go:generate codegen -m bts\n\t// bts: -null_cache=\"null\", -struct_name=userRepo")
 	rootCmd.Flags().StringSliceVarP(&fns, model.FlagNameFuncNames, model.FlagNameFuncNamesShort, nil, "specify function names that need to generate.")
 	rootCmd.Flags().StringVarP(&output, model.FlagNameOutput, model.FlagNameOutputShort, "", "specify function names that need to generate.")
 }

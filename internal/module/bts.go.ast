@@ -1,0 +1,89 @@
+package module
+
+import (
+	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"os"
+	"strings"
+
+	"github.com/harddies/codegen/internal/arg"
+	"github.com/harddies/codegen/internal/model"
+	"github.com/spf13/cobra"
+)
+
+type bts struct {
+	arg.Sets
+}
+
+func (d *bts) Name() string {
+	return model.FlagModulePage
+}
+
+func (d *bts) Run(cmd *cobra.Command, args []string) {
+	var err error
+	defer func() {
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}()
+
+	dir, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	dirEntries, err := os.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	for _, dirEntry := range dirEntries {
+		if dirEntry.IsDir() {
+			continue
+		}
+
+		if !strings.HasSuffix(dirEntry.Name(), ".go") || strings.HasSuffix(dirEntry.Name(), ".bts.go") {
+			continue
+		}
+
+		var astFile *ast.File
+		if astFile, err = d.readFile(dirEntry.Name()); err != nil {
+			return
+		}
+
+		/*if err = d.generateBtsFile(info, dir, dirEntry.Name()); err != nil {
+			return
+		}*/
+		fmt.Printf("%+v", astFile)
+	}
+}
+
+func (d *bts) readFile(filename string) (astFile *ast.File, err error) {
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, filename, nil, parser.AllErrors)
+	if err != nil {
+		return
+	}
+
+	ast.Inspect(f, func(n ast.Node) bool {
+		if n == nil {
+			return false
+		}
+
+		switch node := n.(type) {
+		case *ast.ImportSpec:
+
+		case *ast.Comment:
+			if node.Pos() == fset.File(node.Pos()).Pos(node.Slash) {
+				// 单行注释
+				fmt.Printf("Comment (single line): %s\n", n.Text)
+			} else {
+				// 多行注释
+				fmt.Printf("Comment (multi line): %s\n", n.Text)
+			}
+		}
+		return true
+	})
+	return
+}

@@ -27,8 +27,8 @@ func NewStrategy(command *cobra.Command, args *arg.Sets) (s *Strategy) {
 	switch strings.ToLower(args.Module) {
 	case model.FlagModuleDao:
 		s.m = &dao{Sets: *args}
-	case model.FlagModulePage:
-		s.m = &page{Sets: *args}
+	case model.FlagModuleBts:
+		s.m = &bts{Sets: *args}
 	default:
 		_ = command.Usage()
 		os.Exit(1)
