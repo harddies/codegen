@@ -96,7 +96,9 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 		btsAnnotation string
 		isBts         bool
 	)
-	info = &FileBtsInfo{}
+	info = &FileBtsInfo{
+		SingleFlightVar: "cacheSingleFlight",
+	}
 	buf := bufio.NewReader(f)
 	for {
 		var line []byte
@@ -150,6 +152,8 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 					funcInfo.NullCache = argValue
 				case "struct_name":
 					funcInfo.StructName = argValue
+				case "single_flight_var":
+					info.SingleFlightVar = argValue
 				}
 			}
 
@@ -202,9 +206,10 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 }
 
 type FileBtsInfo struct {
-	Package   string
-	Import    string
-	FuncInfos []*FileBtsFuncInfo
+	Package         string
+	Import          string
+	SingleFlightVar string
+	FuncInfos       []*FileBtsFuncInfo
 }
 
 type FileBtsFuncInfo struct {
@@ -250,8 +255,8 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 	}
 	var rr interface{}
 	sf := r.cacheSF{{ .FuncName }}({{ .Variable }})
-	rr, err, _ = cacheSingleFlight.Do(sf, func() (ri interface{}, e error) {
-		ri, e = r.Raw{{ .FuncName }}({{ .Variable }})
+	rr, err, _ = {{ .SingleFlightVar }}.Do(sf, func() (ri interface{}, e error) {
+		ri, e = r.Get{{ .FuncName }}({{ .Variable }})
 		return
 	})
 	{{ .ReturnResVariable }} = rr.({{ .ReturnResType }})
