@@ -195,7 +195,6 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 				funcInfo.ReturnResType = returnInfo[1]
 			}
 
-			fmt.Printf("%+v\n", funcInfo)
 			info.FuncInfos = append(info.FuncInfos, funcInfo)
 
 			isBts = false
@@ -268,7 +267,7 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 	}
 	var rr interface{}
 	sf := r.cacheSF{{ .FuncName }}({{ .Variable }})
-	rr, err, _ = {{ .SingleFlightVar }}.Do(sf, func() (ri interface{}, e error) {
+	rr, err, _ = {{ $.SingleFlightVar }}.Do(sf, func() (ri interface{}, e error) {
 		ri, e = r.Get{{ .FuncName }}({{ .Variable }})
 		return
 	})
