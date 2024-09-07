@@ -55,6 +55,9 @@ func (d *bts) Run(cmd *cobra.Command, args []string) {
 			return
 		}
 
+		if info == nil {
+			continue
+		}
 		if err = d.generateBtsFile(info, dir, dirEntry.Name()); err != nil {
 			return
 		}
@@ -150,6 +153,8 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 				switch argName {
 				case "null_cache":
 					funcInfo.NullCache = argValue
+				case "empty_value":
+					funcInfo.EmptyValue = argValue
 				case "struct_name":
 					funcInfo.StructName = argValue
 				case "single_flight_var":
@@ -199,6 +204,11 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 		}
 	}
 
+	if len(info.FuncInfos) <= 0 {
+		info = nil
+		return
+	}
+
 	if len(imports) > 0 {
 		info.Import = strings.Join(imports, "\n")
 	}
@@ -214,6 +224,7 @@ type FileBtsInfo struct {
 
 type FileBtsFuncInfo struct {
 	NullCache         string
+	EmptyValue        string
 	StructName        string
 	FuncName          string
 	Variable          string
@@ -245,12 +256,14 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 		addCache = false
 		err = nil
 	}
+{{ if ne .NullCache .EmptyValue }}
 	defer func() {
 		if {{ .ReturnResVariable }} == {{ .NullCache }} {
-			{{ .ReturnResVariable }} = ""
+			{{ .ReturnResVariable }} = {{ .EmptyValue }}
 		}
 	}()
-	if {{ .ReturnResVariable }} != "" {
+{{ end }}
+	if {{ .ReturnResVariable }} != {{ .NullCache }} {
 		return
 	}
 	var rr interface{}
@@ -264,15 +277,16 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 		return
 	}
 	miss := {{ .ReturnResVariable }}
-	if miss == "" {
+{{ if ne .NullCache .EmptyValue }}
+	if miss == {{ .EmptyValue }} {
 		miss = {{ .NullCache }}
 	}
+{{ end }}
 	if !addCache {
 		return
 	}
 	r.AddCache{{ .FuncName }}({{ .Variable }}, miss)
 	return
 }
-
 {{ end }}`
 )
