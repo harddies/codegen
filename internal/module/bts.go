@@ -140,27 +140,6 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 		}
 		if isBts {
 			funcInfo := new(FileBtsFuncInfo)
-			argStrs := strings.Split(btsAnnotation, " ")
-			for _, argStr := range argStrs {
-				if !strings.HasPrefix(argStr, "-") {
-					continue
-				}
-				btsArg := strings.SplitN(argStr, "=", 2)
-				if len(btsArg) != 2 {
-					continue
-				}
-				argName, argValue := strings.TrimLeft(btsArg[0], "-"), btsArg[1]
-				switch argName {
-				case "null_cache":
-					funcInfo.NullCache = argValue
-				case "empty_value":
-					funcInfo.EmptyValue = argValue
-				case "struct_name":
-					funcInfo.StructName = argValue
-				case "single_flight_var":
-					info.SingleFlightVar = argValue
-				}
-			}
 
 			funcInfo.FuncName = funcNameRegexp.FindAllStringSubmatch(lineS, -1)[0][1]
 			funcArgStr := funcArgRegexp.FindAllStringSubmatch(lineS, -1)[0][1]
@@ -195,6 +174,30 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 				funcInfo.ReturnResType = returnInfo[1]
 			}
 
+			argStrs := strings.Split(btsAnnotation, " ")
+			for _, argStr := range argStrs {
+				if !strings.HasPrefix(argStr, "-") {
+					continue
+				}
+				btsArg := strings.SplitN(argStr, "=", 2)
+				if len(btsArg) != 2 {
+					continue
+				}
+				argName, argValue := strings.TrimLeft(btsArg[0], "-"), btsArg[1]
+				switch argName {
+				case "null_cache":
+					funcInfo.NullCache = argValue
+				case "empty_value":
+					funcInfo.EmptyValue = argValue
+				case "check_null_code":
+					funcInfo.CheckNullCode = strings.ReplaceAll(argValue, "$", funcInfo.ReturnResVariable)
+				case "struct_name":
+					funcInfo.StructName = argValue
+				case "single_flight_var":
+					info.SingleFlightVar = argValue
+				}
+			}
+
 			info.FuncInfos = append(info.FuncInfos, funcInfo)
 
 			isBts = false
@@ -224,6 +227,7 @@ type FileBtsInfo struct {
 type FileBtsFuncInfo struct {
 	NullCache         string
 	EmptyValue        string
+	CheckNullCode     string
 	StructName        string
 	FuncName          string
 	Variable          string
@@ -255,14 +259,12 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 		addCache = false
 		err = nil
 	}
-{{ if ne .NullCache .EmptyValue }}
 	defer func() {
-		if {{ .ReturnResVariable }} == {{ .NullCache }} {
+		if {{ .CheckNullCode }} {
 			{{ .ReturnResVariable }} = {{ .EmptyValue }}
 		}
 	}()
-{{ end }}
-	if {{ .ReturnResVariable }} != {{ .NullCache }} {
+	if {{ .ReturnResVariable }} != {{ .EmptyValue }} {
 		return
 	}
 	var rr interface{}
@@ -276,11 +278,9 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 		return
 	}
 	miss := {{ .ReturnResVariable }}
-{{ if ne .NullCache .EmptyValue }}
 	if miss == {{ .EmptyValue }} {
 		miss = {{ .NullCache }}
 	}
-{{ end }}
 	if !addCache {
 		return
 	}
