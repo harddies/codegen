@@ -71,7 +71,15 @@ func (d *bts) generateBtsFile(info *FileBtsInfo, dir, orgFilename string) (err e
 	}
 
 	orgFilenamePrefix := strings.Split(orgFilename, ".")[0]
-	outputFilename := filepath.Join(dir, orgFilenamePrefix+".bts.go")
+	btsFilename := orgFilenamePrefix + ".bts.go"
+	targetDir := dir
+	outputFilename := filepath.Join(targetDir, btsFilename)
+	if d.Sets.Target != "" {
+		targetDir = filepath.Join(targetDir, d.Sets.Target)
+		outputFilename = filepath.Join(targetDir, btsFilename)
+	}
+	dirs := strings.Split(targetDir, "/")
+	info.Package = "package " + dirs[len(dirs)-1]
 	f, err := os.OpenFile(outputFilename, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		return
@@ -250,7 +258,6 @@ const (
 import (
 {{ .Import }}
 )
-
 {{ range .FuncInfos }}
 func (r *{{ .StructName }}) {{ .FuncDef }} {
 	addCache := true

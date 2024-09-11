@@ -37,4 +37,5 @@ type Sets struct {
 	Module    string
 	FuncNames []string
 	Output    string
+	Target    string
 }

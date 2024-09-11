@@ -19,6 +19,7 @@ var (
 	mod    string
 	fns    []string
 	output string
+	target string
 )
 
 func init() {
@@ -32,6 +33,7 @@ func init() {
 					arg.SetModule(mod),
 					arg.SetFuncNames(fns),
 					arg.SetOutput(output),
+					arg.SetTarget(target),
 				)
 
 				c := module.NewStrategy(cmd, argSets)
@@ -39,9 +41,10 @@ func init() {
 			},
 		}
 	})
-	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, model.FlagNameModuleShort, "", "generate which code of module. [required]\n - dao\n - bts: generate bts code that is rw between cache and db base on kratosV2 data. e.g.\n\t//go:generate codegen -m bts\n\t// bts: -null_cache=\"null\", -struct_name=userRepo")
+	rootCmd.Flags().StringVarP(&mod, model.FlagNameModule, model.FlagNameModuleShort, "", "generate which code of module. [required]\n - dao\n - bts: generate bts code that is rw between cache and db base on kratosV2 data. e.g.\n\t//go:generate codegen -m bts -t ../../data/\n\t// bts: -null_cache=&do.Demo{} -empty_value=nil -check_null_code=$!=nil&&$.ID==0 -struct_name=thirdPartnerRepo -single_flight_var=g")
 	rootCmd.Flags().StringSliceVarP(&fns, model.FlagNameFuncNames, model.FlagNameFuncNamesShort, nil, "specify function names that need to generate.")
 	rootCmd.Flags().StringVarP(&output, model.FlagNameOutput, model.FlagNameOutputShort, "", "specify function names that need to generate.")
+	rootCmd.Flags().StringVarP(&target, model.FlagNameTarget, model.FlagNameTargetShort, "", "specify target dir. use to bts")
 }
 
 func Execute() error {
