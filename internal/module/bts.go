@@ -159,6 +159,7 @@ func (d *bts) readFile(filename string) (info *FileBtsInfo, err error) {
 				variables = append(variables, funcArgInfo[0])
 			}
 			funcInfo.Variable = strings.Join(variables, ", ")
+			funcInfo.AddCacheVariable = strings.ReplaceAll(funcInfo.Variable, "ctx", "context.Background()")
 
 			funcInfo.FuncDef = strings.TrimLeft(lineS, "\t")
 
@@ -239,6 +240,7 @@ type FileBtsFuncInfo struct {
 	StructName        string
 	FuncName          string
 	Variable          string
+	AddCacheVariable  string
 	FuncDef           string
 	ReturnResVariable string
 	ReturnResType     string
@@ -293,7 +295,7 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 	}
 
 	go func() {
-		_ = r.AddCache{{ .FuncName }}({{ .Variable }}, miss)
+		_ = r.AddCache{{ .FuncName }}({{ .AddCacheVariable }}, miss)
 	}()
 	return
 }
