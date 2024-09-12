@@ -291,7 +291,10 @@ func (r *{{ .StructName }}) {{ .FuncDef }} {
 	if !addCache {
 		return
 	}
-	_ = r.AddCache{{ .FuncName }}({{ .Variable }}, miss)
+
+	go func() {
+		_ = r.AddCache{{ .FuncName }}({{ .Variable }}, miss)
+	}()
 	return
 }
 {{ end }}`
